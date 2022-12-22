@@ -1,10 +1,15 @@
 import React from 'react'
 import {Product, FooterBanner, HeroBanner, Footer} from '../components'
+import {client} from '../lib/client'
 
-const Home = () => {
+
+
+const Home = ({products,bannerData}:any) => {
   return (
     <>
-      <HeroBanner/>
+      <HeroBanner bannerData={bannerData.length && bannerData[0]}/>
+      {console.log(bannerData)}
+      {/* {console.log(products)} */}
       
 
       <div className='text-center my-4'>
@@ -33,6 +38,21 @@ const Home = () => {
       <FooterBanner/>
     </>
   )
+}
+
+export const getServerSideProps = async () => {
+  const query = `*[_type == "product"]`
+  const products = await client.fetch(query)
+
+  const bannerQuery = `*[_type == "banner"]`
+  const banners = await client.fetch(bannerQuery)
+
+  return {
+    props: {
+      products,
+      bannerData: banners
+    }
+}
 }
 
 export default Home
